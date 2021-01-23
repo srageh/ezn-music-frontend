@@ -1,43 +1,89 @@
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
+
+
 import './App.css';
-import React from 'react'
+import Header from './header';
+import Home from './Home';
+import Profile from './Profile';
+import Tracks from './Tracks';
+import Artists from './Artists'
+import Playlist from './Playlist';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  
+} from "react-router-dom";
+
+
 
 function App() {
-  var state = {
-    click:false
+  
+  const [playlistTracks, setPlaylistTracks] = useState([])
+
+
+  //console.log(playlistTracks)
+
+
+
+
+
+
+  var url = window.location;
+   var  access_token= new URLSearchParams(url.search).get('access_token');
+     //console.log(access_token)
+    
+
+
+
+  if(access_token != null){
+    localStorage.setItem('token', access_token);
   }
+
+  else{
+    access_token =  localStorage.getItem('token');
+    
+  }
+  
+
 
   
 
-const datas = [
-  {name:'bob',age:19},
-  {name:'steve', age:22}
-]
-function getData(toggelData){
-  let string = '';
-  state.click = true;
-  datas.forEach((data)=>{
-    if(toggelData == 'age'){
-      string = string + '<br>' + data.age;
-    }
-    else{
-      string = string + '<br>' + data.name;
-    }
-    
-    
-  })
-  document.getElementById('data').innerHTML = string;
-  //var 
-  console.log(toggelData)
-}
+
+
+
+
 
   return (
     <div className="App">
-      <h1>Pratcice React</h1>
-      <button onClick={()=>getData('name')}>Names</button>
-      <button onClick={()=>getData('age')}>Ages</button>
-      <div id="data"></div>
+      
+      
+
+        <Router>
+            <Header setPlaylistTracks={setPlaylistTracks}  token= {access_token} />
+
      
+            <Switch> 
+              <Route exact path="/"    >
+                <Home token= {access_token}/>
+              </Route>
+              <Route exact path="/tracks"    >
+                <Tracks token= {access_token}/>
+              </Route>
+              <Route exact path="/artists"    >
+                <Artists token= {access_token}/>
+              </Route>
+            <Route exact path={`/playlist/:id`}   >
+                <Playlist playlistTracks = {playlistTracks} token= {access_token}/>
+              </Route>
+            </Switch>
+           
+     
+          <Profile token= {access_token} />
+        </Router>
+        
+      
     </div>
   );
 }
